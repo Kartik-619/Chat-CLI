@@ -10,6 +10,7 @@ app.use(cors());
 
 //routes
 app.use('/login',require('./routes/loginRoute'));
+app.use('/register',require('./routes/registerRoute'));
 
 app.get('/',(req,res)=>{
     res.send('backend is running');

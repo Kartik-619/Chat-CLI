@@ -1,5 +1,5 @@
 const User=require('../schema/User.js');
-exports.login=async ()=>{
+exports.login=async (req,res)=>{
     //requesting these vars from clien side
     const {username,password}=req.body;
     try{

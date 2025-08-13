@@ -4,4 +4,4 @@ const {register}=require('../controllers/registerController');
 
 router.post('/register',register)
 
-exports.module=router;
+module.exports=router;

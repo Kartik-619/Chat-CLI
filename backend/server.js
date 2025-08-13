@@ -1,16 +1,18 @@
 const express=require('express');
+const mongoose=require('mongoose');
 const cors=require('cors');
 const connectDB=require('./config/config');
 
 const app=express();
+const port=4500;
 
 //middlewares
 app.use(express.json());
 app.use(cors());
 
 //routes
-app.use('/login',require('./routes/loginRoute'));
-app.use('/register',require('./routes/registerRoute'));
+app.use('/api',require('./routes/loginRoute'));
+app.use('/api',require('./routes/registerRoute'));
 
 app.get('/',(req,res)=>{
     res.send('backend is running');

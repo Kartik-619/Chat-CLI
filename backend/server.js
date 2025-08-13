@@ -2,9 +2,9 @@ const express=require('express');
 const mongoose=require('mongoose');
 const cors=require('cors');
 const connectDB=require('./config/config');
-
-const app=express();
 const port=4500;
+const app=express();
+
 
 //middlewares
 app.use(express.json());

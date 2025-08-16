@@ -48,54 +48,58 @@ export default function Login() {
 
   return (
     <div className="bg-gradient-to-t from-black to-[#0e0425] min-h-screen flex items-center justify-center p-4 relative">
-      {/* ✅ Show MatrixBackground overlay if true */}
+      {/*  Show MatrixBackground overlay if true */}
       {showMat && <MatrixBackground />}
 
       {!showMat && (
         <form
-          onSubmit={handleSubmit}
-          className="bg-blue-950 border-4 border-indigo-600 p-8 rounded-lg 
-                     shadow-[0_0_30px_green] w-full max-w-xs space-y-4"
+        onSubmit={handleSubmit}
+        className="bg-gray-900/80 border-2 border-green-600 p-8 rounded-lg 
+                   shadow-[0_0_25px_rgba(0,255,0,0.7)] w-full max-w-xs space-y-4"
+      >
+        <h2 className="text-xl font-semibold text-center text-green-400">
+          Login
+        </h2>
+      
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full bg-black/70 px-4 py-2 border border-green-700 rounded 
+                     text-green-200 placeholder-green-500 
+                     focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+      
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full bg-black/70 px-4 py-2 border border-green-700 rounded 
+                     text-green-200 placeholder-green-500 
+                     focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+      
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-green-700 hover:bg-green-500 hover:text-black 
+                     text-white font-medium py-2 px-4 rounded transition duration-200
+                     disabled:opacity-70 disabled:cursor-not-allowed 
+                     shadow-[0_0_10px_white"
         >
-          <h2 className="text-xl font-semibold text-center text-green-500">
-            Login
-          </h2>
-
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full bg-slate-800 px-4 py-2 border border-gray-300 rounded 
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-slate-800 px-4 py-2 border border-gray-300 rounded 
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black hover:bg-gray-50 hover:text-black text-white 
-                       font-medium py-2 px-4 rounded transition duration-200
-                       disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-
-          <p className="text-center text-sm text-gray-300">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-green-400 hover:underline">
-              Sign Up
-            </Link>
-          </p>
-        </form>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      
+        <p className="text-center text-sm text-gray-300">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-green-400 hover:underline">
+            Sign Up
+          </Link>
+        </p>
+      </form>
+      
       )}
     </div>
   );

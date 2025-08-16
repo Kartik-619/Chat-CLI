@@ -4,65 +4,57 @@ const LoadingScreen = () => {
   const [matrixLines, setMatrixLines] = useState([]);
   const [showAccess, setShowAccess] = useState(false);
 
-  // Generate random binary lines
   useEffect(() => {
-    const lines = Array.from({ length: 20 }, () =>
-      Array.from({ length: 40 }, () => (Math.random() > 0.5 ? "1" : "0")).join("")
-    );
-    setMatrixLines(lines);
+    const generateLines = () =>
+      Array.from({ length: 30 }, () =>
+        Array.from({ length: 60 }, () =>
+          Math.random() > 0.5 ? "1" : "0"
+        ).join("")
+      );
 
-    // Show "ACCESS GRANTED" after 4.5 seconds
+    setMatrixLines(generateLines());
+
+    // Update lines every 120ms (rain effect)
+    const interval = setInterval(() => {
+      setMatrixLines(generateLines());
+    }, 120);
+
+    // Show "ACCESS GRANTED" after 4.5s
     const timer = setTimeout(() => {
       setShowAccess(true);
     }, 4500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
-    <div className="relative h-screen w-screen bg-black overflow-hidden">
-      
-      {/* Top Center: ACCESS GRANTED */}
-      <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 text-center pointer-events-none">
+    <div className="absolute h-screen w-screen bg-black text-green-500 overflow-hidden m-0 p-0">
+      {/* Overlay text (always on top) */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-50 space-y-2">
         <p className="text-green-400 font-mono text-lg animate-pulse">
           DECRYPTING USER PROFILE...
         </p>
-
         {showAccess && (
-          <p className="text-green-500 font-mono text-4xl font-bold tracking-wider drop-shadow-lg animate-fade-in">
-            ACCESS GRANTED
+          <p className="text-green-600 font-mono text-sm opacity-90 animate-fade-in">
+            ACCESS GRANTED • INITIALIZING TERMINAL
           </p>
         )}
       </div>
 
-      {/* Matrix Rain - Background */}
-      <div className="absolute inset-0 flex flex-col justify-center items-center p-6 gap-4 z-10">
-        {matrixLines.map((line, i) => (
-          <div
-            key={i}
-            className="text-green-600 font-mono text-sm sm:text-base opacity-70 drop-shadow-md"
+      {/* Matrix Rain */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-40">
+        {matrixLines.map((line, index) => (
+          <p
+            key={index}
+            className="font-mono text-sm opacity-70 leading-none tracking-widest"
           >
             {line}
-          </div>
+          </p>
         ))}
       </div>
-
-      {/* Custom Animation */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fadeIn 1.2s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };

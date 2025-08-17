@@ -40,7 +40,7 @@ export default function Login() {
   useEffect(() => {
     if (showMat) {
       const timer = setTimeout(() => {
-        navigate("/home");
+        navigate("/userprofile");
       }, 10000);
       return () => clearTimeout(timer);
     }

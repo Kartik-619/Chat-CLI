@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Routes,BrowserRouter ,Route} from 'react-router-dom'
 import Login from './components/Login'
 import SignUp from './components/signup'
+import UserProfile from './pages/user_profile'
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path="/" element={<SignUp/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/register' element={<SignUp/>} />
+        <Route path='/userprofile' element={<UserProfile/>} />
       </Routes>
      
       

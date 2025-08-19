@@ -1,25 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axios from 'axios'; // Make sure to install: npm install axios
 
 export default function UserProfile() {
-  const [bio, setBio] = useState('');
-  const [username] = useState('ne0_user'); // Example username
+  const [username,setUsername] = useState('');
   const [gender, setGender] = useState({
     male: false,
     female: false,
     nonBinary: false,
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const selected = Object.keys(gender).filter((k) => gender[k]);
-    alert(`Profile updated!\nBio: ${bio}\nGender: ${selected.join(', ') || 'Not specified'}`);
-  };
+  //  Bio state
+  const [bio, setBio] = useState('I am a cyberpunk explorer.'); // Simulate existing bio
+  const [isEditingBio, setIsEditingBio] = useState(false); // Controls input visibility
 
   const handleGenderChange = (key) => {
     setGender((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
+  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await axios.get('http://localhost:4500/api/userprofile'); // GET endpoint
+        const userData = res.data.user;
+
+        setUsername(userData.username);
+        setBio(userData.details.bio);
+
+        // Set gender checkboxes
+        if (userData.details.gender === 'male') {
+          setGender(prev => ({ ...prev, male: true }));
+        } else if (userData.details.gender === 'female') {
+          setGender(prev => ({ ...prev, female: true }));
+        } else if (userData.details.gender === 'other') {
+          setGender(prev => ({ ...prev, nonBinary: true }));
+        }
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+        alert('Could not load your profile. Please log in again.');
+      }
+    };
+
+    fetchProfile();
+  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const selected = Object.keys(gender).filter((k) => gender[k]);
+    const genderValue = selected.length > 0 ? selected[0] : null;
+
+    try {
+      const res = await axios.post('http://localhost:4500/api/userprofile', {
+        username,
+        bio,
+        gender: genderValue,
+      });
+
+      if (res.data.success) {
+        const updatedUser = res.data.user;
+        setUsername(updatedUser.username);
+        if (updatedUser?.details?.bio) {
+          setBio(updatedUser.details.bio);
+        }
+        // Update gender checkboxes if needed
+      }
+    } catch (err) {
+      console.error('Error while updating profile', err);
+      alert('Failed to update profile. Check console for details.');
+    }
+
+    //  After submit, hide the input
+    setIsEditingBio(false);
   };
 
   return (
@@ -104,19 +155,53 @@ export default function UserProfile() {
           </h2>
         </div>
 
-        {/* Bio Input */}
+        {/* Bio Display or Edit */}
         <div className="mb-6 text-left">
-          <label htmlFor="bio" className="block text-green-500 font-bold text-sm mb-1">
-            BIO
-          </label>
-          <textarea
-            id="bio"
-            placeholder="Enter your bio..."
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            className="w-full px-3 py-2 bg-black border border-green-700 text-green-400 placeholder-green-600 rounded focus:outline-none focus:ring-2 focus:ring-green-500 font-mono text-sm"
-            rows="3"
-          />
+          <label className="block text-green-500 font-bold text-sm mb-1">BIO</label>
+
+          {/* Show Bio Text if not editing */}
+          {!isEditingBio ? (
+            <div className="text-green-300 text-sm leading-tight mb-2">
+              {bio || <em className="text-gray-500">No bio set</em>}
+            </div>
+          ) : null}
+
+          {/* Edit Button */}
+          <button
+            type="button"
+            onClick={() => setIsEditingBio(true)}
+            className={`text-xs px-3 py-1 mb-2 rounded border border-green-600 text-green-400 hover:bg-green-900 hover:text-white transition ${isEditingBio ? 'hidden' : 'inline-block'}`}
+          >
+            {bio ? 'Edit Bio' : 'Add Bio'}
+          </button>
+
+          {/* Bio Input (only when editing) */}
+          {isEditingBio && (
+            <div>
+              <textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                className="w-full px-3 py-2 bg-black border border-green-700 text-green-400 placeholder-green-600 rounded focus:outline-none focus:ring-2 focus:ring-green-500 font-mono text-sm"
+                rows="3"
+                placeholder="Enter your bio..."
+              />
+              <div className="flex gap-2 mt-2 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBio(false)}
+                  className="text-xs px-2 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="text-xs px-2 py-1 bg-green-800 text-black font-bold rounded hover:bg-green-600"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Gender Checkboxes */}
@@ -161,12 +246,7 @@ export default function UserProfile() {
           >
             HOW TO USE
           </button>
-          <button
-            type="submit"
-            className="px-4 py-1 bg-green-800 text-green-500 font-bold rounded text-xs hover:bg-green-600 transition"
-          >
-            APPLY CHANGES
-          </button>
+          {/* "Apply Changes" is now handled by Save in bio */}
         </div>
       </form>
 

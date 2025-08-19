@@ -30,4 +30,4 @@ const Profile=async (req,res)=> {
         return res.status(500).json({success:false,message:'Internal Server Error'});
     }
 }
-modules.export={Profile};
+module.exports={Profile};

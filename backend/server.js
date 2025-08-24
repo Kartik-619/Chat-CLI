@@ -1,14 +1,18 @@
 const express=require('express');
-const mongoose=require('mongoose');
 const cors=require('cors');
+require('dotenv').config();
 const connectDB=require('./config/config');
-const port=4500;
+const port=process.env.PORT||5000;
 const app=express();
+
 
 
 //middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin:process.env.CLIENT_URL ||'http://localhost:4500',
+    credentials:true
+}));
 
 //routes
 app.use('/api',require('./routes/loginRoute'));

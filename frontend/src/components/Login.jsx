@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import MatrixBackground from "./loadscreen";
+import API from "../services/api";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -15,7 +15,8 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:4500/api/login", {
+      //while using the Cookies we dont really use the axios but create service api and use it in there
+      const response = await API.post("/api/login", {
         username,
         password,
       });

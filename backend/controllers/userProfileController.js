@@ -1,9 +1,34 @@
 const express=require('express');
+const User = require('../schema/User');
 
+//allows to make a get request to send user data into the frontend
+const showProfile=async (req,res)=>{
+    try{
+        const username=req.user.username;
+        const user=await User.findOne({username}).select('username details ');
+        if(!user){
+            return res.status(200).json({
+                success:false,
+                message:'The user doesnt exists'});
+        }
+        return res.status(200).json({
+            success:true,
+            user
+        });
+    }catch{
+        return res.status(500).json({
+            success:false,
+            message:'server error'
+        });
+    }
+}
+
+//allows to make changes in already exisiting data
 const Profile=async (req,res)=> {
     try{
         //add profile photo se
-        const {username,bio,gender}=req.body;
+        const username=req.user.username;
+        const {bio,gender}=req.body;
         const existUser=await User.findOne({username});
                 if(!existUser){
                     return res.status(200).json(
@@ -30,4 +55,4 @@ const Profile=async (req,res)=> {
         return res.status(500).json({success:false,message:'Internal Server Error'});
     }
 }
-module.exports={Profile};
+module.exports={Profile,showProfile};

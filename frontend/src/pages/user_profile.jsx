@@ -1,8 +1,9 @@
 import React, { useState,useEffect } from 'react';
 import axios from 'axios'; // Make sure to install: npm install axios
+import API from '../services/api';
 
 export default function UserProfile() {
-  const [username,setUsername] = useState('');
+  const [username,setUsername] = useState('Trial User');
   const [gender, setGender] = useState({
     male: false,
     female: false,
@@ -22,7 +23,7 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('http://localhost:4500/api/userprofile'); // GET endpoint
+        const res = await API.get('/api/userprofile'); // GET endpoint
         const userData = res.data.user;
 
         setUsername(userData.username);
@@ -44,23 +45,21 @@ export default function UserProfile() {
 
     fetchProfile();
   }, []);
+
+  //the code will run on profile updation
   const handleSubmit = async (e) => {
     e.preventDefault();
     const selected = Object.keys(gender).filter((k) => gender[k]);
     const genderValue = selected.length > 0 ? selected[0] : null;
 
     try {
-      const res = await axios.post('http://localhost:4500/api/userprofile', {
-        username,
-        bio,
-        gender: genderValue,
-      });
+      const res = await API.put('/api/userprofile');
 
       if (res.data.success) {
         const updatedUser = res.data.user;
         setUsername(updatedUser.username);
         if (updatedUser?.details?.bio) {
-          setBio(updatedUser.details.bio);
+          setBio(updatedUser.details.bio ||'');
         }
         // Update gender checkboxes if needed
       }

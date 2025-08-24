@@ -1,8 +1,14 @@
 import React, { useState,useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios'; // Make sure to install: npm install axios
 import API from '../services/api';
 
 export default function UserProfile() {
+
+  //creating the vars
+  const navigate=useNavigate();
+
+  //gender and username states
   const [username,setUsername] = useState('Trial User');
   const [gender, setGender] = useState({
     male: false,
@@ -20,6 +26,8 @@ export default function UserProfile() {
       [key]: !prev[key],
     }));
   };
+
+  //making sure the DB data is fetched when the page is loaded
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -53,7 +61,10 @@ export default function UserProfile() {
     const genderValue = selected.length > 0 ? selected[0] : null;
 
     try {
-      const res = await API.put('/api/userprofile');
+      const res = await API.put('/api/userprofile',{
+        bio,
+        gender:genderValue
+      });
 
       if (res.data.success) {
         const updatedUser = res.data.user;
@@ -71,6 +82,14 @@ export default function UserProfile() {
     //  After submit, hide the input
     setIsEditingBio(false);
   };
+
+
+  //navigate to help section
+  const How_to=()=>{
+    navigate('/how_to');
+  }
+
+
 
   return (
     <div className="relative h-screen w-full bg-black overflow-hidden flex items-center justify-center p-4">
@@ -179,6 +198,7 @@ export default function UserProfile() {
             <div>
               <textarea
                 value={bio}
+                required
                 onChange={(e) => setBio(e.target.value)}
                 className="w-full px-3 py-2 bg-black border border-green-700 text-green-400 placeholder-green-600 rounded focus:outline-none focus:ring-2 focus:ring-green-500 font-mono text-sm"
                 rows="3"
@@ -188,16 +208,11 @@ export default function UserProfile() {
                 <button
                   type="button"
                   onClick={() => setIsEditingBio(false)}
-                  className="text-xs px-2 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600"
+                  className="text-xs px-2 py-1 bg-gray-700 text-green-300 rounded hover:bg-gray-600"
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="text-xs px-2 py-1 bg-green-800 text-black font-bold rounded hover:bg-green-600"
-                >
-                  Save
-                </button>
+               
               </div>
             </div>
           )}
@@ -241,10 +256,23 @@ export default function UserProfile() {
         <div className="flex gap-3 justify-center">
           <button
             type="button"
-            className="px-4 py-1 bg-gray-800 text-green-400 border border-green-700 rounded text-xs hover:bg-green-900 hover:text-white transition"
+            onClick={How_to}
+            className="px-4 py-1 bg-gray-800 text-green-400 border border-green-700 rounded text-xs hover:bg-green-500 hover:text-white transition"
           >
             HOW TO USE
           </button>
+          <button
+            type="button"
+            className="px-4 py-1  bg-gray-800 text-green-400 border border-green-700 rounded text-xs hover:bg-green-500 hover:text-white transition"
+          >
+            Home
+          </button>
+          <button
+                  type="submit"
+                  className="text-xs px-2 py-1 bg-green-800 text-green-500 font-bold rounded hover:bg-green-600"
+                >
+                  Save
+                </button>
           {/* "Apply Changes" is now handled by Save in bio */}
         </div>
       </form>
